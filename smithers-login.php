@@ -163,7 +163,7 @@ class smithers_login
 		
 		$css = '<style type="text/css"> 
 			#login { background:url(\''. ${$phrase}["logoimg"].'\') center top no-repeat !important;}
-			input.button-primary, button.button-primary, a.button-primary {background: url(\''.WP_PLUGIN_URL.'/smithers-login/images/'. ${$phrase}["loginbutton"].'\') !important;}
+			input.button-primary, button.button-primary, a.button-primary {background: url(\''.plugin_dir_url(__FILE__).'/images/'. ${$phrase}["loginbutton"].'\') !important;}
 		</style>';
 		
 		_e($html);
