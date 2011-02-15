@@ -4,8 +4,9 @@ Plugin Name: Smithers Login
 Plugin URI: http://www.wpsmith.net/
 Description: This plugin enables you to specify a style sheet to be used on the login page for each MS site.
 Version: 0.1a
-Author: Travis Smith
+Author: wpsmith
 Author URI: http://www.wpsmith.net/
+Stable tag: 0.1
 */
 
 class smithers_login
