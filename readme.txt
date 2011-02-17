@@ -4,7 +4,7 @@ Donate link: http://wpsmith.net/
 Tags: style, css, login, admin, registration, theme, multisite
 Requires at least: 3.0
 Tested up to: 3.1
-Stable tag: 0.1
+Stable tag: 0.2
 
 Add style to your login page!! This plugin enables you to specify a style sheet to be used on the login page.
 
