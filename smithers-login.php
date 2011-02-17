@@ -4,9 +4,8 @@ Plugin Name: Smithers Login
 Plugin URI: http://www.wpsmith.net/
 Description: This plugin enables you to specify a style sheet to be used on the login page for each MS site.
 Version: 0.1a
-Author: wpsmith
+Author: Travis Smith
 Author URI: http://www.wpsmith.net/
-Stable tag: 0.1
 */
 
 class smithers_login
@@ -93,11 +92,27 @@ class smithers_login
 		if($data)
 		{
 			$this->current_settings = $data;
-
+			
 			foreach($data as $name => $value)
 			{
-				if(get_option($name) != $value)
+				//if(get_option($name) != $value)
+				//{
+					//update_option($name, $value);
+					//if (substr($name,0,-2) == "sl_logo") {
+						//print_r($data);
+						//echo $name.'<br />';
+						////add_option_to_blog_table ($blogID, $option_name, $option_value);
+					//}
+				//}
+				//else {
 					update_option($name, $value);
+					if (substr($name,0,-2) == "sl_logo") {
+						//echo $name.': substr($name,0,7):'.substr($name,0,7).'<br />';
+						//echo $name.': substr($name,7):'.substr($name,7).'<br />';
+						$this->add_option_to_blog_table(substr($name,7), $name, $value);
+						//echo 'add_option_to_blog_table(substr($name,7), $name, $value)-blog_id: '.substr($name,7).'optname: '.$name.'optval: '.$value;
+					}
+				//}
 			}
 		}
 	}
@@ -164,7 +179,7 @@ class smithers_login
 		
 		$css = '<style type="text/css"> 
 			#login { background:url(\''. ${$phrase}["logoimg"].'\') center top no-repeat !important;}
-			input.button-primary, button.button-primary, a.button-primary {background: url(\''.plugin_dir_url(__FILE__).'/images/'. ${$phrase}["loginbutton"].'\') !important;}
+			input.button-primary, button.button-primary, a.button-primary {background: url(\''.plugin_dir_url(__FILE__).'images/'. ${$phrase}["loginbutton"].'\') !important;}
 		</style>';
 		
 		_e($html);
@@ -330,11 +345,21 @@ class smithers_login
 			`option_value` ,
 			`autoload`
 			)
-			VALUES (NULL, '0', %s, %s, 'yes')
-			ON DUPLICATE KEY UPDATE `option_name` = VALUES(`option_name`), `option_value` = %s, `autoload` = VALUES(`autoload`)",
-			array($option_name.$blogID, $option_value, $option_value) ) );
-	}
+			VALUES (NULL, '0', '%s', '%s', 'yes')
+			ON DUPLICATE KEY UPDATE `option_name` = VALUES(`option_name`), `option_value` = '%s', `autoload` = VALUES(`autoload`)",
+			array($option_name, $option_value, $option_value) ) );
 	
+	$insertstr = "<br />INSERT INTO `".DB_NAME."`.`".$wpdb->get_blog_prefix($blogID)."options` (
+			`option_id` ,
+			`blog_id` ,
+			`option_name` ,
+			`option_value` ,
+			`autoload`
+			)
+			VALUES (NULL, '0','".$option_name."', '".$option_value."', 'yes')
+			ON DUPLICATE KEY UPDATE `option_name` = VALUES(`option_name`), `option_value` ='".$option_value."', `autoload` = VALUES(`autoload`) <br />";
+	//echo $insertstr;
+	}
 	// Admin page
 	function admin_page()	{
 		if ($_POST['sl_update'])
