@@ -429,6 +429,7 @@ Un-Ordered List:
 		//Get imgs for ea domain
 		_e(' <div class="wrap">
 					<h2>Smithers Login Domain Options</h2>
+					<em>This plugin must be Network Activated to work properly.</em>
 			');
 			
 		_e('
