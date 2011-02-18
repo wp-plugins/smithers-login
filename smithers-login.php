@@ -3,8 +3,8 @@
 Plugin Name: Smithers Login
 Plugin URI: http://www.wpsmith.net/
 Description: This plugin enables you to specify a style sheet to be used on the login page for each MS site.
-Version: 0.2
-Author: Travis Smith
+Version: 0.3
+Author: wpsmith
 Author URI: http://www.wpsmith.net/
 */
 
@@ -92,27 +92,13 @@ class smithers_login
 		if($data)
 		{
 			$this->current_settings = $data;
-			
 			foreach($data as $name => $value)
 			{
-				//if(get_option($name) != $value)
-				//{
-					//update_option($name, $value);
-					//if (substr($name,0,-2) == "sl_logo") {
-						//print_r($data);
-						//echo $name.'<br />';
-						////add_option_to_blog_table ($blogID, $option_name, $option_value);
-					//}
-				//}
-				//else {
-					update_option($name, $value);
-					if (substr($name,0,-2) == "sl_logo") {
-						//echo $name.': substr($name,0,7):'.substr($name,0,7).'<br />';
-						//echo $name.': substr($name,7):'.substr($name,7).'<br />';
-						$this->add_option_to_blog_table(substr($name,7), $name, $value);
-						//echo 'add_option_to_blog_table(substr($name,7), $name, $value)-blog_id: '.substr($name,7).'optname: '.$name.'optval: '.$value;
-					}
-				//}
+				if ($name=='sl_logo1') $name='sl_logo';
+				update_option($name, $value);
+				if (substr($name,0,7) == "sl_logo") {
+					$this->add_option_to_blog_table(substr($name,7), $name, $value);
+				}
 			}
 		}
 	}
@@ -160,23 +146,23 @@ class smithers_login
 			if(strpos($fulladdress,$phrase) == true)
 			{
 				$subdomain=$phrase;
+				$subdomainID=$blog['blog_id'];
 				break;
 			}
 		}
 		
 		$html = "<link rel='stylesheet' id='smithers-login-css' type='text/css' media='screen' href='".$this->g('sl_style_sheet')." ' />\n";
 		
-		$phrase=$blog['domain'];
-		$phrase_array = explode('.',$phrase);
-		$max_words=1;
-		if(count($phrase_array) > $max_words && $max_words > 0)
-			$phrase = implode(' ',array_slice($phrase_array, 0, $max_words));
+		$phrase=$subdomain;
+		$option_logoimg = 'sl_logo';
+		if ($subdomainID != 1)
+			$option_logoimg.= $subdomainID;
+		else
+			$option_logoimg.='';
 		${$phrase} = array(
-			'logoimg' => get_option('sl_logo'.$blog['blog_id']),
+			'logoimg' => $this->get_ms_option($option_logoimg),
 			'loginbutton' => 'default-button-grad.png'
 		);
-		
-		
 		$css = '<style type="text/css"> 
 			#login { background:url(\''. ${$phrase}["logoimg"].'\') center top no-repeat !important;}
 			input.button-primary, button.button-primary, a.button-primary {background: url(\''.plugin_dir_url(__FILE__).'images/'. ${$phrase}["loginbutton"].'\') !important;}
@@ -275,15 +261,17 @@ class smithers_login
 		add_submenu_page('wpmu-admin.php', 'Smithers Login Options', 'Smithers Login', 8, __FILE__, array(&$this, 'admin_page'));
 	}
 	
-	function get_ms_option($option_name, $option_value) {
+	function get_ms_option($option_name) {
 		global $wpdb;
 		$blogs = $this->get_ms_sites();
 		
-		foreach ($blogs as $blog) {
-			if ($optionname=='sl_logo'.$blog['blog_id']) {
-			}
-			else {get_option($optionname);}
-		}
+		if ($option_name == "sl_logo")
+			$option_name = "sl_logo1";
+		$select_statement = "SELECT *
+				FROM `".DB_NAME."`.`".$wpdb->get_blog_prefix($blogID)."options`
+				WHERE `option_name` LIKE '".$option_name."'";
+		$option_value = $wpdb->get_results( $select_statement, ARRAY_A );
+		return $option_value[0]['option_value'];
 	}
 	
 	function get_ms_sites() {
@@ -296,8 +284,6 @@ class smithers_login
 		$blog_list = $wpdb->get_results( $query, ARRAY_A );
 		
 		return $blog_list;
-		//SELECT * FROM [prefix]blogs WHERE site_id=1 ORDER BY [prefix]blogs.blog_id ASC
-		//
 	}
 	
 	function get_site_id($domain) {
@@ -335,7 +321,7 @@ class smithers_login
 	
 	function add_option_to_blog_table ($blogID, $option_name, $option_value) {
 		global $wpdb;
-		
+
 		$wpdb->query( $wpdb->prepare( "
 			INSERT INTO `".DB_NAME."`.`".$wpdb->get_blog_prefix($blogID)."options`
 			(
@@ -358,7 +344,6 @@ class smithers_login
 			)
 			VALUES (NULL, '0','".$option_name."', '".$option_value."', 'yes')
 			ON DUPLICATE KEY UPDATE `option_name` = VALUES(`option_name`), `option_value` ='".$option_value."', `autoload` = VALUES(`autoload`) <br />";
-	//echo $insertstr;
 	}
 	// Admin page
 	function admin_page()	{
