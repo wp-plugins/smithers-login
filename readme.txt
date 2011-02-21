@@ -1,5 +1,5 @@
 === Smithers Login ===
-Contributors: Travis Smith
+Contributors: wpsmith
 Donate link: http://wpsmith.net/
 Tags: style, css, login, admin, registration, theme, multisite
 Requires at least: 3.0
