@@ -1,10 +1,11 @@
 <?php
 /*
 Plugin Name: Smithers Login
-Plugin URI: http://www.wpsmith.net/
+Plugin URI: http://wpsmith.net/smithers-login/
 Description: This plugin enables you to specify a style sheet to be used on the login page for each MS site.
-Version: 0.3
-Author: wpsmith
+Version: 0.4
+Stable Tag: 0.4
+Author: Travis Smith, wpsmith
 Author URI: http://www.wpsmith.net/
 */
 
@@ -347,192 +348,195 @@ class smithers_login
 	}
 	// Admin page
 	function admin_page()	{
-		if ($_POST['sl_update'])
-			_e('<div id="message" class="updated fade"><p>Smithers Login Options Saved</p></div>');
+	if ( current_user_can('manage_options') ) {
+	
+			if ($_POST['sl_update'])
+				_e('<div id="message" class="updated fade"><p>Smithers Login Options Saved</p></div>');
 
-		$html_hints = '<div class="wrap" id="html_hints">
-<h2>XHTML Hints</h2>
-<textarea cols="40" rows="5" disabled>
-Link:
-<a href="http://url">Link</a>
+			$html_hints = '<div class="wrap" id="html_hints">
+	<h2>XHTML Hints</h2>
+	<textarea cols="40" rows="5" disabled>
+	Link:
+	<a href="http://url">Link</a>
 
-Line Break:
-<br />
+	Line Break:
+	<br />
 
-Ordered List:
-<ol>
-	<li>Item 1</li>
-	<li>Item 2</li>
-</ol>
+	Ordered List:
+	<ol>
+		<li>Item 1</li>
+		<li>Item 2</li>
+	</ol>
 
-Un-Ordered List:
-<ul>
-	<li>Item</li>
-	<li>Item</li>
-</ul>
-</textarea>
-</div>';
-		//show styles
-		_e('
-			<style type="text/css">
-				.sl_text_area
-				{
-					width: 600px;
-					height: 200px;
-				}
+	Un-Ordered List:
+	<ul>
+		<li>Item</li>
+		<li>Item</li>
+	</ul>
+	</textarea>
+	</div>';
+			//show styles
+			_e('
+				<style type="text/css">
+					.sl_text_area
+					{
+						width: 600px;
+						height: 200px;
+					}
 
-				.sl_text_box
-				{
-					width: 600px;
-				}
+					.sl_text_box
+					{
+						width: 600px;
+					}
 
-				form#login_style label
-				{
-					font-weight: bold;
-				}
+					form#login_style label
+					{
+						font-weight: bold;
+					}
 
-				#html_hints
-				{
-					position: absolute;
-					left: 670px;
-					margin-top: -30px;
-				}
+					#html_hints
+					{
+						position: absolute;
+						left: 670px;
+						margin-top: -30px;
+					}
 
-				#html_hints textarea
-				{
-					background: #e3e3ea;
-					color: #777;
-					width: 280px;
-					height: 300px;
-					font-size: 12px;
-					font-family: courier;
-					padding: 15px;
-				}
-			</style>
-		');
-		
-		//Get imgs for ea domain
-		_e(' <div class="wrap">
-					<h2>Smithers Login Domain Options</h2>
-					<em>This plugin must be Network Activated to work properly.</em>
+					#html_hints textarea
+					{
+						background: #e3e3ea;
+						color: #777;
+						width: 280px;
+						height: 300px;
+						font-size: 12px;
+						font-family: courier;
+						padding: 15px;
+					}
+				</style>
 			');
 			
-		_e('
-			<form id="login_style" method="post">
-				<input type="hidden" name="sl_update" id="sl_update" value="ls_update" />
-		');	
-		
-		global $wpdb;	
-		
-		$blogs = $this->get_ms_sites();		
-		$sl_tables = $this->get_ms_options_tables();
-		
-		foreach($blogs as $blog)
-		{
+			//Get imgs for ea domain
+			_e(' <div class="wrap">
+						<h2>Smithers Login Domain Options</h2>
+						<em>This plugin must be Network Activated to work properly.</em>
+				');
+				
+			_e('
+				<form id="login_style" method="post">
+					<input type="hidden" name="sl_update" id="sl_update" value="ls_update" />
+			');	
 			
-			$sl_logo['sl_logo'.$blog['blog_id']]='';
-			if(!get_option($optionname))
+			global $wpdb;	
+			
+			$blogs = $this->get_ms_sites();		
+			$sl_tables = $this->get_ms_options_tables();
+			
+			foreach($blogs as $blog)
 			{
-				$time = current_time('mysql');
-				$y = substr( $time, 0, 4 );
-				$m = substr( $time, 5, 2 );
-				$this->current_settings[$optionname] = WP_CONTENT_URL .'/blogs.dir/'.$blog['blog_id'].'/files/'.$y.'/'.$m.'/logo.jpg';
-			}
-			else
-				$this->current_settings[$optionname] = get_option($optionname);
+				
+				$sl_logo['sl_logo'.$blog['blog_id']]='';
+				if(!get_option($optionname))
+				{
+					$time = current_time('mysql');
+					$y = substr( $time, 0, 4 );
+					$m = substr( $time, 5, 2 );
+					$this->current_settings[$optionname] = WP_CONTENT_URL .'/blogs.dir/'.$blog['blog_id'].'/files/'.$y.'/'.$m.'/logo.jpg';
+				}
+				else
+					$this->current_settings[$optionname] = get_option($optionname);
 
-			$phrase=$blog['domain'];
-			$phrase_array = explode('.',$phrase);
-			$max_words=1;
-			if(count($phrase_array) > $max_words && $max_words > 0)
-				$phrase = implode(' ',array_slice($phrase_array, 0, $max_words));
-			${$phrase} = array(
-				'logoimg' => get_option('sl_logo'.$blog['blog_id']),
-				'loginbutton' => 'images/default-button-grad.png'
-			);
+				$phrase=$blog['domain'];
+				$phrase_array = explode('.',$phrase);
+				$max_words=1;
+				if(count($phrase_array) > $max_words && $max_words > 0)
+					$phrase = implode(' ',array_slice($phrase_array, 0, $max_words));
+				${$phrase} = array(
+					'logoimg' => get_option('sl_logo'.$blog['blog_id']),
+					'loginbutton' => 'images/default-button-grad.png'
+				);
+				
+				$option_name = 'sl_logo'.$blog['blog_id'];;
+				$option_value = ${$phrase}['logoimg'];
+				$sl_logo['sl_logo'.$blog['blog_id']] = $option_value;
+						
+				_e('	<p>
+							<label for="sl_logo">Enter Login Image for Domain: '. $blog['domain'] . ' ('.$blog['blog_id'].') </label> <a href="http://'.$blog['domain'].'/wp-login.php">Visit</a><br />
+							<input type="text" name="sl_logo'.$blog["blog_id"].'" id="sl_logo" class="sl_text_box" value="'.$sl_logo['sl_logo'.$blog['blog_id']].'" />
+						</p>
+				');
+			}
 			
-			$option_name = 'sl_logo'.$blog['blog_id'];;
-			$option_value = ${$phrase}['logoimg'];
-			$sl_logo['sl_logo'.$blog['blog_id']] = $option_value;
-					
-			_e('	<p>
-						<label for="sl_logo">Enter Login Image for Domain: '. $blog['domain'] . ' ('.$blog['blog_id'].') </label> <a href="http://'.$blog['domain'].'/wp-login.php">Visit</a><br />
-						<input type="text" name="sl_logo'.$blog["blog_id"].'" id="sl_logo" class="sl_text_box" value="'.$sl_logo['sl_logo'.$blog['blog_id']].'" />
-					</p>
-			');
+			
+			_e('<p><input type="submit" value="Save  &raquo;"></p>
+					</div>');
+			//show form
+			_e('
+					<div class="wrap">
+						<h2>General Options</h2>
+						<p>
+							<label for="sl_style_sheet">Stylesheet:</label><br />
+							<input type="text" name="sl_style_sheet" id="sl_style_sheet" class="sl_text_box" value="'.$this->g('sl_style_sheet').'" />
+						</p>
+						<p>
+							<label for="sl_head_url">Header Image Link URL:</label><br />
+							<input type="text" name="sl_head_url" id="sl_head_url" class="sl_text_box" value="'.$this->g('sl_head_url').'" />
+						</p>
+						<p>
+							<label for="sl_head_title">Header Image Link Title:</label><br />
+							<input type="text" name="sl_head_title" id="sl_head_title" class="sl_text_box" value="'.$this->g('sl_head_title').'" />
+						</p>
+						<p><input type="submit" value="Save  &raquo;"></p>
+					</div>
+					<div class="wrap">
+						<h2>Page Specific Messages</h2>
+						'.$html_hints.'
+						<p>
+							<label for="sl_msg_css">Messages CSS:</label><br />
+							<textarea name="sl_msg_css" id="sl_msg_css" cols="20" rows="5" class="code sl_text_area">'.$this->g('sl_msg_css').'</textarea>
+						</p>
+						<p>
+							<label for="sl_login_msg">Login Page Message:</label><br />
+							<textarea name="sl_login_msg" id="sl_login_msg" cols="20" rows="5" class="code sl_text_area">'.$this->g('sl_login_msg').'</textarea>
+						</p>
+						<p>
+							<label for="sl_logout_msg">Logout Page Message:</label><br />
+							<textarea name="sl_logout_msg" id="sl_logout_msg" cols="20" rows="5" class="code sl_text_area">'.$this->g('sl_logout_msg').'</textarea>
+						</p>
+						<p>
+							<label for="sl_reg_msg">Registration Page Message:</label><br />
+							<textarea name="sl_reg_msg" id="sl_reg_msg" cols="20" rows="5" class="code sl_text_area">'.$this->g('sl_reg_msg').'</textarea>
+						</p>
+						<p>
+							<label for="sl_pass_msg">Forgot Password Page Message:</label><br />
+							<textarea name="sl_pass_msg" id="sl_pass_msg" cols="20" rows="5" class="code sl_text_area">'.$this->g('sl_pass_msg').'</textarea>
+						</p>
+						<br />
+						<h2>Error Messages</h2>
+						<p>
+							<label for="sl_login_error_loggedout">Logged Out:</label><br />
+							<input type="text" name="sl_login_error_loggedout" id="sl_login_error_loggedout" class="sl_text_box" value="'.$this->g('sl_login_error_loggedout').'" />
+						</p>
+						<p>
+							<label for="sl_login_error_registerdiabled">Registration Disabled:</label><br />
+							<input type="text" name="sl_login_error_registerdiabled" id="sl_login_error_registerdiabled" class="sl_text_box" value="'.$this->g('sl_login_error_registerdiabled').'" />
+						</p>
+						<p>
+							<label for="sl_login_error_confirm">Confirmation Email:</label><br />
+							<input type="text" name="sl_login_error_confirm" id="sl_login_error_confirm" class="sl_text_box" value="'.$this->g('sl_login_error_confirm').'" />
+						</p>
+						<p>
+							<label for="sl_login_error_newpass">New Password:</label><br />
+							<input type="text" name="sl_login_error_newpass" id="sl_login_error_newpass" class="sl_text_box" value="'.$this->g('sl_login_error_newpass').'" />
+						</p>
+						<p>
+							<label for="sl_login_error_registered">Reg. Complete / Check Mail:</label><br />
+							<input type="text" name="sl_login_error_registered" id="sl_login_error_registered" class="sl_text_box" value="'.$this->g('sl_login_error_registered').'" />
+						</p>
+						<p><input type="submit" value="Save  &raquo;"></p>
+					</div>
+				</form>
+				
+			');		
 		}
-		
-		
-		_e('<p><input type="submit" value="Save  &raquo;"></p>
-				</div>');
-		//show form
-		_e('
-				<div class="wrap">
-					<h2>General Options</h2>
-					<p>
-						<label for="sl_style_sheet">Stylesheet:</label><br />
-						<input type="text" name="sl_style_sheet" id="sl_style_sheet" class="sl_text_box" value="'.$this->g('sl_style_sheet').'" />
-					</p>
-					<p>
-						<label for="sl_head_url">Header Image Link URL:</label><br />
-						<input type="text" name="sl_head_url" id="sl_head_url" class="sl_text_box" value="'.$this->g('sl_head_url').'" />
-					</p>
-					<p>
-						<label for="sl_head_title">Header Image Link Title:</label><br />
-						<input type="text" name="sl_head_title" id="sl_head_title" class="sl_text_box" value="'.$this->g('sl_head_title').'" />
-					</p>
-					<p><input type="submit" value="Save  &raquo;"></p>
-				</div>
-				<div class="wrap">
-					<h2>Page Specific Messages</h2>
-					'.$html_hints.'
-					<p>
-						<label for="sl_msg_css">Messages CSS:</label><br />
-						<textarea name="sl_msg_css" id="sl_msg_css" cols="20" rows="5" class="code sl_text_area">'.$this->g('sl_msg_css').'</textarea>
-					</p>
-					<p>
-						<label for="sl_login_msg">Login Page Message:</label><br />
-						<textarea name="sl_login_msg" id="sl_login_msg" cols="20" rows="5" class="code sl_text_area">'.$this->g('sl_login_msg').'</textarea>
-					</p>
-					<p>
-						<label for="sl_logout_msg">Logout Page Message:</label><br />
-						<textarea name="sl_logout_msg" id="sl_logout_msg" cols="20" rows="5" class="code sl_text_area">'.$this->g('sl_logout_msg').'</textarea>
-					</p>
-					<p>
-						<label for="sl_reg_msg">Registration Page Message:</label><br />
-						<textarea name="sl_reg_msg" id="sl_reg_msg" cols="20" rows="5" class="code sl_text_area">'.$this->g('sl_reg_msg').'</textarea>
-					</p>
-					<p>
-						<label for="sl_pass_msg">Forgot Password Page Message:</label><br />
-						<textarea name="sl_pass_msg" id="sl_pass_msg" cols="20" rows="5" class="code sl_text_area">'.$this->g('sl_pass_msg').'</textarea>
-					</p>
-					<br />
-					<h2>Error Messages</h2>
-					<p>
-						<label for="sl_login_error_loggedout">Logged Out:</label><br />
-						<input type="text" name="sl_login_error_loggedout" id="sl_login_error_loggedout" class="sl_text_box" value="'.$this->g('sl_login_error_loggedout').'" />
-					</p>
-					<p>
-						<label for="sl_login_error_registerdiabled">Registration Disabled:</label><br />
-						<input type="text" name="sl_login_error_registerdiabled" id="sl_login_error_registerdiabled" class="sl_text_box" value="'.$this->g('sl_login_error_registerdiabled').'" />
-					</p>
-					<p>
-						<label for="sl_login_error_confirm">Confirmation Email:</label><br />
-						<input type="text" name="sl_login_error_confirm" id="sl_login_error_confirm" class="sl_text_box" value="'.$this->g('sl_login_error_confirm').'" />
-					</p>
-					<p>
-						<label for="sl_login_error_newpass">New Password:</label><br />
-						<input type="text" name="sl_login_error_newpass" id="sl_login_error_newpass" class="sl_text_box" value="'.$this->g('sl_login_error_newpass').'" />
-					</p>
-					<p>
-						<label for="sl_login_error_registered">Reg. Complete / Check Mail:</label><br />
-						<input type="text" name="sl_login_error_registered" id="sl_login_error_registered" class="sl_text_box" value="'.$this->g('sl_login_error_registered').'" />
-					</p>
-					<p><input type="submit" value="Save  &raquo;"></p>
-				</div>
-			</form>
-			
-		');		
 	} // end function admin_page
 } // end class
 
