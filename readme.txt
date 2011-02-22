@@ -6,12 +6,11 @@ Requires at least: 3.0
 Tested up to: 3.1
 Stable tag: 0.3
 
-Add style to your WordPress multisite login pages!! This plugin enables you to specify a stylesheet to be used on the login page with a custom image.
+Add style to your WordPress multisite login pages! This plugin enables you to specify a CSS to be used on the login page with a custom image/messages.
 
 == Description ==
 
-WordPress's themes are absolutly amazing, except you are not able to theme the login pages very well.
-Smithers Login is a light weight plugin that will allow you full theme control over the WordPress Multisite login pages.
+WordPress's themes are absolutly amazing, except you are not able to theme the login pages very well. Smithers Login is a light weight plugin that will allow you full theme control over the WordPress Multisite login pages. This plugin allows for different custom login screens on a single WordPress 3.0 Multisite with Domain Mapping. This Network Activated plugin enables you to specify a stylesheet to be used with every multisite login page allowing for custom login images and messages.
 
 Some Features:
 
