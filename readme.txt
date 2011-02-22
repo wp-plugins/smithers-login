@@ -1,6 +1,6 @@
 === Smithers Login ===
 Contributors: wpsmith
-Donate link: http://wpsmith.net/
+Donate link: http://wpsmith.net/smithers-login/#donate
 Tags: style, css, login, admin, registration, theme, multisite
 Requires at least: 3.0
 Tested up to: 3.1
