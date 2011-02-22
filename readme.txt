@@ -4,7 +4,7 @@ Donate link: http://wpsmith.net/smithers-login/#donate
 Tags: style, css, login, admin, registration, theme, multisite
 Requires at least: 3.0
 Tested up to: 3.1
-Stable tag: 0.3
+Stable tag: 0.4
 
 Add style to your WordPress multisite login pages! This plugin enables you to specify a CSS to be used on the login page with a custom image/messages.
 
